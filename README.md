@@ -2,6 +2,8 @@
 
 **免人工標註**:以「合成資料」訓練 YOLO11,從《英雄聯盟》職業比賽轉播的小地圖偵測 10 位英雄的即時位置,再據此計算走位量化指標,分析職業選手(T1 Keria)的操作。
 
+> **發想出處**:本專案的題目與「用視覺模型量化選手操作」的整體思路,源自 YouTube 頻道**圓某人和四某人**的影片[《硬核分析Keria的天賦有多高?用數據告訴你為什麼Keria是歷天怪》](https://www.youtube.com/watch?v=wQOFX4SB6Go)。本 repo 為個人的獨立重現與延伸:自行實作完整 pipeline(合成資料、訓練、偵測、指標),並將指標定義對齊該影片同樣引用的 CHI'24 延世大學論文。
+
 - 分析素材:Worlds 2024 總決賽 Game 5(T1 vs BLG),追蹤目標 Keria(Poppy,輔助)
 - 全片偵測 **67,790 筆**英雄座標(2 fps 取樣),合成驗證集 **mAP50 = 0.995 / mAP50-95 = 0.991**
 - 指標設計參考 CHI'24 論文 *Characterizing and Quantifying Expert Input Behavior in League of Legends*(Lee et al., Yonsei)
@@ -122,7 +124,8 @@ Python · PyTorch (CUDA) · Ultralytics YOLO11 · OpenCV · NumPy · yt-dlp
 - Lee et al., *Characterizing and Quantifying Expert Input Behavior in League of Legends*, CHI 2024(指標定義與標定方式;[資料集](https://github.com/narey54541/LLL))
 - [DeepLeague](https://github.com/farzaa/DeepLeague) — 小地圖偵測先行研究
 - [LeagueAI](https://github.com/Oleffa/LeagueAI) — 合成訓練資料的參考實作
-- 靈感來源:YouTube 影片《硬核分析 Keria 的天賦有多高》
+- 發想出處:圓某人和四某人,[《硬核分析Keria的天賦有多高?用數據告訴你為什麼Keria是歷天怪,關於如何用模型算法來量化英雄聯盟操作》](https://www.youtube.com/watch?v=wQOFX4SB6Go)(本專案題目與思路來源;pipeline 與程式為獨立實作)
+- 比賽畫面來源:Worlds 2024 Final G5(T1 vs BLG)與 [EWC 2026 QF G1(DK vs BLG)](https://www.youtube.com/watch?v=ZTav3xYr6p0) 賽事 VOD(僅供個人研究)
 
 ## 聲明
 
