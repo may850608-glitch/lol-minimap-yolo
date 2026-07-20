@@ -19,6 +19,8 @@ import cv2
 import numpy as np
 import yaml
 
+cv2.setNumThreads(1)  # 多執行緒在部分環境會拋 Unknown C++ exception;生成不吃重,單執行緒即可
+
 ROOT = Path(__file__).resolve().parent.parent
 CFG = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
 CHAMPS = CFG["champions"]
@@ -31,7 +33,7 @@ BLUE = (183, 159, 101)
 RED = (84, 73, 176)
 TEAM_COLOR = [BLUE] * 5 + [RED] * 5
 
-DIAM_RANGE = (22, 30)  # 圖示直徑(在 256 底圖上),對應真實 ~24px
+DIAM_RANGE = (20, 32)  # 圖示直徑(在 256 底圖上),對應真實 ~24px(後期會放大)
 
 
 def load_assets():
@@ -91,7 +93,7 @@ def paste(bg, icon, alpha, cx, cy):
 
 def augment_bg(bg):
     out = bg.astype(np.float32)
-    out *= random.uniform(0.75, 1.15)            # 亮度
+    out *= random.uniform(0.55, 1.15)            # 亮度(後期戰鬥畫面明顯偏暗,下限放寬)
     out += random.uniform(-12, 12)               # 偏移
     out = np.clip(out, 0, 255).astype(np.uint8)
     # HSV 色相/飽和抖動(不同場/光照)
@@ -99,14 +101,22 @@ def augment_bg(bg):
     hsv[..., 0] = (hsv[..., 0] + random.randint(-6, 6)) % 180
     hsv[..., 1] = np.clip(hsv[..., 1] * random.uniform(0.8, 1.2), 0, 255)
     out = cv2.cvtColor(hsv.astype(np.uint8), cv2.COLOR_HSV2BGR)
-    # 隨機霧區:幾塊半透明深藍橢圓
-    if random.random() < 0.7:
+    # 隨機霧區:幾塊半透明深藍橢圓(後期戰鬥煙霧更多更暗)
+    if random.random() < 0.8:
         fog = out.copy()
-        for _ in range(random.randint(1, 3)):
+        for _ in range(random.randint(1, 4)):
             cx, cy = random.randint(0, SIZE), random.randint(0, SIZE)
-            ax, ay = random.randint(30, 90), random.randint(30, 90)
+            ax, ay = random.randint(30, 110), random.randint(30, 110)
             cv2.ellipse(fog, (cx, cy), (ax, ay), 0, 0, 360, (40, 25, 15), -1)
-        out = cv2.addWeighted(out, 0.65, fog, 0.35, 0)
+        out = cv2.addWeighted(out, random.uniform(0.55, 0.7), fog, random.uniform(0.3, 0.45), 0)
+    # 守衛/眼位雜訊:滿地圖的小色點(藍/紅/黃綠小方塊與圓點)
+    for _ in range(random.randint(0, 28)):
+        px, py = random.randint(4, SIZE - 4), random.randint(4, SIZE - 4)
+        col = random.choice([(200, 150, 60), (60, 60, 200), (60, 200, 200), (120, 220, 160)])
+        if random.random() < 0.5:
+            cv2.rectangle(out, (px - 2, py - 2), (px + 2, py + 2), col, -1)
+        else:
+            cv2.circle(out, (px, py), random.randint(2, 3), col, -1, cv2.LINE_AA)
     return out
 
 

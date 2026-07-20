@@ -20,9 +20,11 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 CFG = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
 CHAMPS = CFG["champions"]
-TEAM = {c: ("T1" if i < 5 else "BLG") for i, c in enumerate(CHAMPS)}
-ADC = {"T1": "Xayah", "BLG": "Kaisa"}            # 各隊 ADC
-SUPPORT = {"T1": "Poppy", "BLG": "Rell"}          # 各隊輔助
+TEAMS = CFG["teams"]                              # [藍方, 紅方]
+TEAM = {c: (TEAMS[0] if i < 5 else TEAMS[1]) for i, c in enumerate(CHAMPS)}
+ADC = CFG["adc_champ"]                            # 各隊 ADC
+SUPPORT = CFG["support_champ"]                    # 各隊輔助
+PLAYER = CFG["support_player"]                    # 輔助選手名(顯示用)
 CSV = ROOT / "outputs" / "positions.csv"
 
 D_MIN = 0.012   # 視為「有移動」的最小步距(正規化);過濾靜止時的偵測抖動
@@ -100,20 +102,22 @@ def main():
     for ch in CHAMPS:
         idx, n = positioning_index(by_champ.get(ch, []))
         rows.append((ch, TEAM[ch], idx, n))
+    focus = CFG.get("focus_champion")
     rows_sorted = sorted([r for r in rows if not np.isnan(r[2])], key=lambda r: -r[2])
     for rank, (ch, tm, idx, n) in enumerate(rows_sorted, 1):
-        star = "  ← Keria" if ch == "Poppy" else ""
+        star = f"  ← {PLAYER[TEAM[ch]]}" if ch == focus else ""
         print(f"  #{rank}  {ch:<10}({tm:<3}) {idx:5.1f}°   (n={n}){star}")
 
-    print("\n================  輔助對位:Keria(Poppy) vs ON(Rell)================")
-    for team in ("T1", "BLG"):
+    duel = " vs ".join(f"{PLAYER[t]}({SUPPORT[t]})" for t in TEAMS)
+    print(f"\n================  輔助對位:{duel}================")
+    for team in TEAMS:
         sp = SUPPORT[team]
         track = by_champ.get(sp, [])
         idx, _ = positioning_index(track)
         cov = map_coverage(track) if track else float("nan")
         plen = path_length(track) if track else float("nan")
         md, roam = dist_to_adc(sp, by_frame)
-        who = "Keria" if sp == "Poppy" else "ON"
+        who = PLAYER[team]
         print(f"\n  {who} - {sp} ({team})  樣本 {len(track)}")
         print(f"    Positioning 轉向角 : {idx:5.1f}°")
         print(f"    地圖覆蓋率         : {cov:5.1f}%")

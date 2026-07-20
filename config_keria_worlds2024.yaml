@@ -1,0 +1,32 @@
+# 專案共用設定
+
+# Data Dragon 版本(英雄頭像來源)。用 list 第一個即最新;這裡先用最新。
+ddragon_version: "16.13.1"
+
+# 這場要分析的比賽影片中,小地圖在 1920x1080 畫面的位置(像素)。
+# 由 02_grab_frame.py 抽幀 + 格線定位得出。
+minimap:
+  x0: 1645
+  y0: 800
+  x1: 1890
+  y1: 1045
+
+# 訓練/推論時把小地圖統一縮放到這個邊長(正方形)。
+train_imgsz: 256
+
+# 這場 Game 5(T1 vs BLG, Worlds 2024 Final)的 10 隻英雄。
+# 用 Data Dragon 的英雄 ID(注意大小寫,如 Kai'Sa -> Kaisa)。
+# class 順序即 YOLO 的 class id 順序,訓練與推論都依這份。
+champions:
+  # T1
+  - Gragas      # Zeus  (top)
+  - XinZhao     # Oner  (jungle)
+  - Galio       # Faker (mid)
+  - Xayah       # Gumayusi (adc)
+  - Poppy       # Keria (support)  <- 追蹤目標
+  # BLG
+  - Jax         # Bin   (top)
+  - JarvanIV    # XUN   (jungle)
+  - Ahri        # Knight(mid)
+  - Kaisa       # Elk   (adc)
+  - Rell        # ON    (support)

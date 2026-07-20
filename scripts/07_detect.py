@@ -20,7 +20,7 @@ CFG = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
 MM = CFG["minimap"]
 SIZE = CFG["train_imgsz"]
 CHAMPS = CFG["champions"]
-TEAM = ["T1"] * 5 + ["BLG"] * 5
+TEAM = [CFG["teams"][0]] * 5 + [CFG["teams"][1]] * 5
 
 
 def find_vod() -> str:

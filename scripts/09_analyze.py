@@ -56,7 +56,8 @@ def metrics(name, pts, times):
     cover = len(np.unique((pts * 12).astype(int), axis=0)) / (12 * 12) * 100
     # 上/中/下:用 y- x 對角線粗略分區(LoL 地圖左下=己方,右上=敵方)
     diag = pts[:, 0] - pts[:, 1]
-    print(f"\n== {name}(Keria 追蹤目標)量化指標 ==" if name == "Poppy" else f"\n== {name} ==")
+    tag = "(追蹤目標)" if name == CFG.get("focus_champion") else ""
+    print(f"\n== {name}{tag} 量化指標 ==")
     print(f"  偵測樣本數 : {len(pts)}  (約涵蓋 {times[-1]/60:.0f} 分鐘)")
     print(f"  地圖覆蓋率 : {cover:.0f}%  (走過的格子 / 12x12 網格)")
     print(f"  平均位置   : x={pts[:,0].mean():.2f}, y={pts[:,1].mean():.2f}  (0=左/上,1=右/下)")
@@ -90,4 +91,4 @@ def main(target):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "Poppy")
+    main(sys.argv[1] if len(sys.argv) > 1 else CFG.get("focus_champion", CHAMPS[4]))
