@@ -23,8 +23,8 @@ CHAMPS = CFG["champions"]
 TEAMS = CFG["teams"]                              # [藍方, 紅方]
 TEAM = {c: (TEAMS[0] if i < 5 else TEAMS[1]) for i, c in enumerate(CHAMPS)}
 ADC = CFG["adc_champ"]                            # 各隊 ADC
-SUPPORT = CFG["support_champ"]                    # 各隊輔助
-PLAYER = CFG["support_player"]                    # 輔助選手名(顯示用)
+SUPPORT = CFG.get("duel_champ") or CFG["support_champ"]    # 對位英雄(預設輔助)
+PLAYER = CFG.get("duel_player") or CFG["support_player"]   # 對位選手名(顯示用)
 CSV = ROOT / "outputs" / "positions.csv"
 
 D_MIN = 0.012   # 視為「有移動」的最小步距(正規化);過濾靜止時的偵測抖動
@@ -102,14 +102,13 @@ def main():
     for ch in CHAMPS:
         idx, n = positioning_index(by_champ.get(ch, []))
         rows.append((ch, TEAM[ch], idx, n))
-    focus = CFG.get("focus_champion")
     rows_sorted = sorted([r for r in rows if not np.isnan(r[2])], key=lambda r: -r[2])
     for rank, (ch, tm, idx, n) in enumerate(rows_sorted, 1):
-        star = f"  ← {PLAYER[TEAM[ch]]}" if ch == focus else ""
+        star = f"  ← {PLAYER[TEAM[ch]]}" if ch in SUPPORT.values() else ""
         print(f"  #{rank}  {ch:<10}({tm:<3}) {idx:5.1f}°   (n={n}){star}")
 
     duel = " vs ".join(f"{PLAYER[t]}({SUPPORT[t]})" for t in TEAMS)
-    print(f"\n================  輔助對位:{duel}================")
+    print(f"\n================  對位比較:{duel}================")
     for team in TEAMS:
         sp = SUPPORT[team]
         track = by_champ.get(sp, [])
