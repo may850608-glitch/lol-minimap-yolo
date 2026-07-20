@@ -1,0 +1,7 @@
+# PyTorch 請依你的 CUDA 版本安裝(本專案開發環境:torch 2.6 + cu124, RTX 4060)
+# https://pytorch.org/get-started/locally/
+ultralytics>=8.3
+opencv-python>=4.10
+numpy>=1.26
+PyYAML>=6.0
+yt-dlp>=2025.1.1

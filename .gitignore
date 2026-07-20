@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# 大型資料 — 皆可由 scripts 重建(01 下載 VOD、05 產生資料集)
+data/vods/
+data/frames/
+data/dataset/
+
+# 訓練過程檔(曲線圖已精選至 docs/)
+runs/
+
+# Ultralytics 預訓練權重(第一次訓練會自動下載)
+/yolo*.pt
+
+# 產出圖(精選版在 docs/;保留 positions.csv 供分析腳本直接使用)
+outputs/*
+!outputs/positions.csv
