@@ -1,0 +1,34 @@
+ddragon_version: 16.13.1
+minimap:
+  x0: 1620
+  y0: 812
+  x1: 1898
+  y1: 1068
+train_imgsz: 256
+champions:
+- Sion
+- JarvanIV
+- Sylas
+- Sivir
+- Lulu
+- RekSai
+- Vi
+- Mel
+- Ezreal
+- Neeko
+teams:
+- T1
+- KT
+adc_champ:
+  T1: Sivir
+  KT: Ezreal
+support_champ: &id001
+  T1: Sion
+  KT: RekSai
+support_player:
+  T1: Doran
+  KT: PerfecT
+duel_champ: *id001
+duel_player:
+  T1: Doran
+  KT: PerfecT

@@ -1,0 +1,34 @@
+ddragon_version: 16.13.1
+minimap:
+  x0: 1620
+  y0: 812
+  x1: 1898
+  y1: 1068
+train_imgsz: 256
+champions:
+- Mordekaiser
+- Qiyana
+- Smolder
+- Corki
+- Leona
+- Jax
+- MonkeyKing
+- Galio
+- Xayah
+- Rakan
+teams:
+- TES
+- BLG
+adc_champ:
+  TES: Corki
+  BLG: Xayah
+support_champ: &id001
+  TES: Mordekaiser
+  BLG: Jax
+support_player:
+  TES: '369'
+  BLG: Bin
+duel_champ: *id001
+duel_player:
+  TES: '369'
+  BLG: Bin

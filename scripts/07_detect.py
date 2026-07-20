@@ -9,6 +9,7 @@
 """
 import argparse
 import csv
+import os
 from pathlib import Path
 
 import cv2
@@ -16,11 +17,12 @@ import yaml
 from ultralytics import YOLO
 
 ROOT = Path(__file__).resolve().parent.parent
-CFG = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
+CFG_PATH = Path(os.environ.get("MM_CONFIG", ROOT / "config.yaml"))  # 可用環境變數指定場次設定
+CFG = yaml.safe_load(CFG_PATH.read_text(encoding="utf-8"))
 MM = CFG["minimap"]
 SIZE = CFG["train_imgsz"]
 CHAMPS = CFG["champions"]
-TEAM = [CFG["teams"][0]] * 5 + [CFG["teams"][1]] * 5
+TEAM = {c: (CFG["teams"][0] if i < 5 else CFG["teams"][1]) for i, c in enumerate(CHAMPS)}
 
 
 def find_vod() -> str:
@@ -36,6 +38,7 @@ def main():
     ap.add_argument("--stride", type=int, default=30, help="每幾幀偵測一次(預設30,約2fps)")
     ap.add_argument("--conf", type=float, default=0.35)
     ap.add_argument("--model", default=str(ROOT / "models" / "minimap.pt"))
+    ap.add_argument("--out", default=str(ROOT / "outputs" / "positions.csv"))
     args = ap.parse_args()
 
     video = args.video or find_vod()
@@ -45,7 +48,7 @@ def main():
         raise SystemExit(f"無法開啟影片:{video}")
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    out = ROOT / "outputs" / "positions.csv"
+    out = Path(args.out)
     f = out.open("w", newline="", encoding="utf-8")
     w = csv.writer(f)
     w.writerow(["frame", "time_s", "champion", "team", "conf", "x", "y"])
@@ -60,17 +63,19 @@ def main():
             mm = frame[MM["y0"]:MM["y1"], MM["x0"]:MM["x1"]]
             mm = cv2.resize(mm, (SIZE, SIZE), interpolation=cv2.INTER_AREA)
             res = model.predict(mm, conf=args.conf, verbose=False)[0]
-            # 每個 class 取信心最高的一個偵測
+            # 每個英雄取信心最高的一個偵測;模型類別可能是聯集,僅保留本場的 10 隻
             best = {}
             for b in res.boxes:
-                cid = int(b.cls)
+                name = model.names[int(b.cls)]
+                if name not in TEAM:
+                    continue
                 conf = float(b.conf)
-                if cid not in best or conf > best[cid][0]:
+                if name not in best or conf > best[name][0]:
                     xc, yc = float(b.xywh[0][0]) / SIZE, float(b.xywh[0][1]) / SIZE
-                    best[cid] = (conf, xc, yc)
+                    best[name] = (conf, xc, yc)
             t = idx / fps
-            for cid, (conf, xc, yc) in best.items():
-                w.writerow([idx, f"{t:.2f}", CHAMPS[cid], TEAM[cid], f"{conf:.3f}",
+            for name, (conf, xc, yc) in best.items():
+                w.writerow([idx, f"{t:.2f}", name, TEAM[name], f"{conf:.3f}",
                             f"{xc:.4f}", f"{yc:.4f}"])
                 n_rows += 1
             if idx % (args.stride * 200) == 0:

@@ -1,48 +1,34 @@
-# 專案共用設定
-
-# Data Dragon 版本(英雄頭像來源)。
-ddragon_version: "16.13.1"
-
-# 這場要分析的比賽影片中,小地圖在 1920x1080 畫面的位置(像素)。
-# 由 02_grab_frame.py 抽幀 + 格線定位得出。(MSI 2026 轉播版面)
+ddragon_version: 16.13.1
 minimap:
-  x0: 1640
-  y0: 810
-  x1: 1915
-  y1: 1064
-
-# 訓練/推論時把小地圖統一縮放到這個邊長(正方形)。
+  x0: 1620
+  y0: 812
+  x1: 1898
+  y1: 1068
 train_imgsz: 256
-
-# === 這場比賽:MSI 2026 淘汰賽 R1 Game 5, T1 vs BLG (2026-07-04, patch 16.13) ===
-# 前 5 = 藍方(合成資料畫藍環),後 5 = 紅方(紅環)。
-# 註:gol.gg 頁面標 BLG 藍方,但轉播畫面 BLG 選手血條為紅、小地圖藍基地側為 T1
-# → 以畫面為準:T1 = 藍方。
 champions:
-  # T1(藍方)
-  - Gnar        # Doran (top)  <- 對位比較
-  - Trundle     # Oner  (jungle)
-  - Taliyah     # Faker (mid)
-  - Yunara      # Peyz  (adc)
-  - Lulu        # Keria (support)
-  # BLG(紅方)
-  - Rumble      # Bin   (top)  <- 對位比較
-  - Kindred     # XUN   (jungle)
-  - Syndra      # Knight(mid)
-  - Ashe        # Viper (adc)
-  - Seraphine   # ON    (support)
-
-# 隊伍標籤:teams[0] = 前 5 隻(藍方),teams[1] = 後 5 隻(紅方)
-teams: ["T1", "BLG"]
-
-# 各隊 ADC / 輔助(用上面的英雄 ID)與輔助選手名(顯示用)
-adc_champ:     { T1: Yunara, BLG: Ashe }
-support_champ: { T1: Lulu,   BLG: Seraphine }
-support_player: { T1: Keria, BLG: "ON" }
-
-# 對位比較(10_skill_index 的重點對照;未設定時退回輔助對位)
-duel_champ:  { T1: Gnar,  BLG: Rumble }
-duel_player: { T1: Doran, BLG: Bin }
-
-# 分析追蹤目標(09/10 預設分析對象)
-focus_champion: Gnar
+- Yorick
+- Sejuani
+- Smolder
+- Ziggs
+- Nautilus
+- Camille
+- Pantheon
+- Galio
+- MissFortune
+- Leona
+teams:
+- KT
+- T1
+adc_champ:
+  KT: Ziggs
+  T1: MissFortune
+support_champ: &id001
+  KT: Yorick
+  T1: Camille
+support_player:
+  KT: PerfecT
+  T1: Doran
+duel_champ: *id001
+duel_player:
+  KT: PerfecT
+  T1: Doran

@@ -17,3 +17,7 @@ runs/
 # 產出圖(精選版在 docs/;保留 positions.csv 供分析腳本直接使用)
 outputs/*
 !outputs/positions.csv
+!outputs/positions_*.csv
+
+# 各場模型權重(共 170MB+,由 run_all_games.sh 重建;repo 僅保留預設 minimap.pt)
+models/minimap_*.pt

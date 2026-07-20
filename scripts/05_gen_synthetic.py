@@ -28,10 +28,12 @@ SIZE = CFG["train_imgsz"]
 ASSETS = ROOT / "data" / "assets"
 DATASET = ROOT / "data" / "dataset"
 
-# 隊伍色環 (BGR):由真實畫面取樣得出(壓縮後偏柔和)。前 5 = T1 藍,後 5 = BLG 紅
+# 隊伍色環 (BGR):由真實畫面取樣得出(壓縮後偏柔和)。前 5 = 藍方,後 5 = 紅方。
+# ring_random(聯集模型用):每個圖示隨機配藍/紅環,讓模型不依賴陣營顏色辨識英雄。
 BLUE = (183, 159, 101)
 RED = (84, 73, 176)
-TEAM_COLOR = [BLUE] * 5 + [RED] * 5
+RING_RANDOM = bool(CFG.get("ring_random"))
+TEAM_COLOR = [BLUE] * 5 + [RED] * 5 if len(CHAMPS) == 10 else None
 
 DIAM_RANGE = (20, 32)  # 圖示直徑(在 256 底圖上),對應真實 ~24px(後期會放大)
 
@@ -130,11 +132,12 @@ def gen_split(n, split):
     margin = 18
     for k in range(n):
         canvas = augment_bg(bg)
-        ids = random.sample(range(len(CHAMPS)), random.randint(3, len(CHAMPS)))
+        ids = random.sample(range(len(CHAMPS)), random.randint(3, min(10, len(CHAMPS))))
         lines = []
         for cid in ids:
             d = random.randint(*DIAM_RANGE)
-            icon, alpha = make_icon(squares[cid], d, TEAM_COLOR[cid])
+            ring = random.choice((BLUE, RED)) if (RING_RANDOM or TEAM_COLOR is None) else TEAM_COLOR[cid]
+            icon, alpha = make_icon(squares[cid], d, ring)
             cx = random.randint(margin, SIZE - margin)
             cy = random.randint(margin, SIZE - margin)
             paste(canvas, icon, alpha, cx, cy)

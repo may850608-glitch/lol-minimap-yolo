@@ -1,0 +1,34 @@
+ddragon_version: 16.13.1
+minimap:
+  x0: 1620
+  y0: 812
+  x1: 1898
+  y1: 1068
+train_imgsz: 256
+champions:
+- Renekton
+- Vi
+- Aurora
+- Sivir
+- Alistar
+- KSante
+- Trundle
+- Azir
+- Varus
+- Poppy
+teams:
+- BLG
+- TES
+adc_champ:
+  BLG: Sivir
+  TES: Varus
+support_champ: &id001
+  BLG: Renekton
+  TES: KSante
+support_player:
+  BLG: Bin
+  TES: '369'
+duel_champ: *id001
+duel_player:
+  BLG: Bin
+  TES: '369'
