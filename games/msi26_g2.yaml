@@ -1,0 +1,37 @@
+ddragon_version: 16.13.1
+minimap:
+  x0: 1640
+  y0: 810
+  x1: 1915
+  y1: 1064
+train_imgsz: 256
+champions:
+- Renekton
+- Naafiri
+- Swain
+- Ezreal
+- Bard
+- Ambessa
+- LeeSin
+- Galio
+- Kaisa
+- Camille
+teams:
+- BLG
+- T1
+adc_champ:
+  BLG: Ezreal
+  T1: Kaisa
+support_champ:
+  BLG: Bard
+  T1: Camille
+support_player:
+  BLG: 'ON'
+  T1: Keria
+duel_champ:
+  BLG: Renekton
+  T1: Ambessa
+duel_player:
+  T1: Doran
+  BLG: Bin
+focus_champion: Ambessa

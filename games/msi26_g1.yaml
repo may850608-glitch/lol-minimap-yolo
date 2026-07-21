@@ -1,0 +1,37 @@
+ddragon_version: 16.13.1
+minimap:
+  x0: 1640
+  y0: 810
+  x1: 1915
+  y1: 1064
+train_imgsz: 256
+champions:
+- Yorick
+- Vi
+- Cassiopeia
+- Jhin
+- Nautilus
+- Jayce
+- Poppy
+- Viktor
+- Ziggs
+- Shen
+teams:
+- T1
+- BLG
+adc_champ:
+  T1: Jhin
+  BLG: Ziggs
+support_champ:
+  T1: Nautilus
+  BLG: Shen
+support_player:
+  T1: Keria
+  BLG: 'ON'
+duel_champ:
+  T1: Yorick
+  BLG: Jayce
+duel_player:
+  T1: Doran
+  BLG: Bin
+focus_champion: Yorick

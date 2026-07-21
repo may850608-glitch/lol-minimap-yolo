@@ -1,0 +1,37 @@
+ddragon_version: 16.13.1
+minimap:
+  x0: 1640
+  y0: 810
+  x1: 1915
+  y1: 1064
+train_imgsz: 256
+champions:
+- Gwen
+- Skarner
+- Aurora
+- Caitlyn
+- Elise
+- KSante
+- JarvanIV
+- Ahri
+- Mel
+- Pyke
+teams:
+- BLG
+- T1
+adc_champ:
+  BLG: Caitlyn
+  T1: Mel
+support_champ:
+  BLG: Elise
+  T1: Pyke
+support_player:
+  BLG: 'ON'
+  T1: Keria
+duel_champ:
+  BLG: Gwen
+  T1: KSante
+duel_player:
+  T1: Doran
+  BLG: Bin
+focus_champion: KSante

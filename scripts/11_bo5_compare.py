@@ -18,10 +18,13 @@ import numpy as np
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
+# (一)各自最終系列賽:兩人不同對手、不同系列,僅供參考
 SERIES = {
     "Doran": ["wf25_g1", "wf25_g2", "wf25_g3", "wf25_g4", "wf25_g5"],
     "Bin": ["tb25_g1", "tb25_g2", "tb25_g3"],
 }
+# (二)同場對決:MSI 2026 R1 完整 BO5,每場兩人同時在場(方法上最嚴謹)
+DUEL_SERIES = ["msi26_g1", "msi26_g2", "msi26_g3", "msi26_g4", "msi26_g5"]
 D_MIN = 0.012
 SMOOTH = 3
 HM_SIZE = 480
@@ -155,10 +158,46 @@ def main():
         out = ROOT / "docs" / f"heatmap_{player}_series.png"
         cv2.imwrite(str(out), hm)
 
-    print("\n================  系列彙總(樣本加權)  ================")
+    print("\n================  各自系列彙總(樣本加權,參考用)  ================")
     print(f"{'':14}{'轉向角':>8}{'平均排名':>10}{'覆蓋率':>8}{'路徑長/分':>10}{'樣本':>8}")
     for p, a in summary.items():
         print(f"  {p:<12}{a['angle']:7.1f}°{a['rank']:9.1f}{a['cov']:7.1f}%{a['ppm']:9.2f}{a['n']:8d}")
+
+    duel_same_game()
+
+
+def duel_same_game():
+    """MSI 2026 R1 完整 BO5:每場兩人同時在場,逐場並列 + 系列彙總。"""
+    print("\n\n################  MSI 2026 R1 同場對決 BO5(Doran vs Bin)  ################")
+    agg = {p: {"rows": [], "pts": []} for p in ("Doran", "Bin")}
+    print(f"\n{'場次':<10}{'Doran(英雄/轉向角/覆蓋)':<34}{'Bin(英雄/轉向角/覆蓋)':<34}")
+    for k in DUEL_SERIES:
+        line = f"{k:<10}"
+        for p in ("Doran", "Bin"):
+            g = analyze_game(k, p)
+            agg[p]["rows"].append(g)
+            agg[p]["pts"] += g["pts"]
+            line += f"{g['champ'][:8]:<9}{g['angle']:5.1f}° {g['cov']:4.1f}%   "
+        print(line)
+
+    print(f"\n{'':14}{'轉向角':>8}{'平均排名':>10}{'覆蓋率':>8}{'路徑長/分':>10}{'樣本':>8}")
+    for p in ("Doran", "Bin"):
+        rows = agg[p]["rows"]
+        w = np.array([g["n"] for g in rows], dtype=float)
+        print(f"  {p:<12}{np.average([g['angle'] for g in rows], weights=w):7.1f}°"
+              f"{np.mean([g['rank'] for g in rows if g['rank']]):9.1f}"
+              f"{np.average([g['cov'] for g in rows], weights=w):7.1f}%"
+              f"{np.average([g['ppm'] for g in rows], weights=w):9.2f}{int(w.sum()):8d}")
+
+    # 同場 BO5 疊加熱區(並排)
+    bg = cv2.resize(cv2.imread(str(ROOT / "data" / "assets" / "minimap_background.png")),
+                    (HM_SIZE, HM_SIZE))
+    panels = []
+    for p in ("Doran", "Bin"):
+        hm = heatmap(agg[p]["pts"], bg)
+        cv2.putText(hm, f"{p} (MSI BO5)", (8, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+        panels.append(hm)
+    cv2.imwrite(str(ROOT / "docs" / "heatmap_doran_vs_bin_msi_bo5.png"), np.hstack(panels))
 
 
 if __name__ == "__main__":
